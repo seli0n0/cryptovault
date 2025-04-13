@@ -1,7 +1,7 @@
 ### 🌐 Полностью переведенное приложение на русский язык + документация
 
 
-![Logo]([https://i.ibb.co/RGt9gcp4/discord2.png]([https://ibb.co/Xf6bWtZk](https://i.ibb.co/RGt9gcp4/discord2.png)))
+![Logo](https://i.ibb.co/RGt9gcp4/discord2.png)
 
 
 ## 📄 **Документация**
