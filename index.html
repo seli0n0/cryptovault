@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoVault - Защищенное шифрование</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Стили остаются без изменений -->
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --dark: #1b263b;
+            --light: #f8f9fa;
+            --danger: #ef233c;
+            --success: #2ec4b6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeIn 1s ease;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #6c757d;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .tab:hover:not(.active) {
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+        
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background-color: #d90429;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: #1fa198;
+        }
+        
+        .file-upload {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        
+        .file-upload input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px dashed #ced4da;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-label:hover {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .file-upload-label i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .file-info {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .result-container {
+            margin-top: 2rem;
+            border-top: 1px solid #dee2e6;
+            padding-top: 1.5rem;
+        }
+        
+        .copy-btn {
+            margin-left: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            background-color: #e9ecef;
+            color: #495057;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .copy-btn:hover {
+            background-color: #dee2e6;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .alert-success {
+            background-color: rgba(46, 196, 182, 0.2);
+            border-left: 4px solid var(--success);
+            color: #0a5c55;
+        }
+        
+        .alert-danger {
+            background-color: rgba(239, 35, 60, 0.2);
+            border-left: 4px solid var(--danger);
+            color: #a31225;
+        }
+        
+        .key-display {
+            word-break: break-all;
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            font-family: monospace;
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+        }
+        
+        .flex-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .flex-row > * {
+            flex: 1;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .flex-row {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-lock"></i> CryptoVault</h1>
+            <p class="subtitle">Защищенное AES-256 + RSA шифрование в вашем браузере</p>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="text">Шифрование текста</div>
+            <div class="tab" data-tab="file">Шифрование файлов</div>
+            <div class="tab" data-tab="rsa">RSA Ключи</div>
+        </div>
+        
+        <div id="alerts-container"></div>
+        
+        <!-- Вкладка шифрования текста -->
+        <div class="tab-content active" id="text-tab">
+            <div class="card">
+                <h2 class="card-title">Шифрование текста</h2>
+                
+                <div class="form-group">
+                    <label for="text-password">Пароль</label>
+                    <input type="password" id="text-password" placeholder="Введите надежный пароль">
+                </div>
+                
+                <div class="form-group">
+                    <label for="text-input">Текст для шифрования/дешифровки</label>
+                    <textarea id="text-input" placeholder="Введите секретное сообщение..."></textarea>
+                </div>
+                
+                <div class="flex-row">
+                    <button class="btn btn-success" id="encrypt-text-btn">
+                        <i class="fas fa-lock"></i> Зашифровать
+                    </button>
+                    <button class="btn btn-secondary" id="decrypt-text-btn">
+                        <i class="fas fa-lock-open"></i> Расшифровать
+                    </button>
+                    <button class="btn btn-danger" id="clear-text-btn">
+                        <i class="fas fa-trash"></i> Очистить
+                    </button>
+                </div>
+
+                <div class="result-container" id="text-result-container" style="display: none;">
+                    <h3>Результат:</h3>
+                    <div class="key-display" id="text-result"></div>
+                    <button class="btn copy-btn" id="copy-text-btn">
+                        <i class="fas fa-copy"></i> Копировать
+                    </button>
+                    <button class="btn copy-btn" id="download-text-btn">
+                        <i class="fas fa-download"></i> Скачать
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка шифрования файлов -->
+        <div class="tab-content" id="file-tab">
+            <div class="card">
+                <h2 class="card-title">Шифрование файлов</h2>
+                
+                <div class="form-group">
+                    <label for="file-password">Пароль</label>
+                    <input type="password" id="file-password" placeholder="Введите надежный пароль">
+                </div>
+                
+                <div class="form-group">
+                    <label>Выберите файл для шифрования/дешифровки</label>
+                    <div class="file-upload">
+                        <input type="file" id="file-input">
+                        <label for="file-input" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Нажмите для выбора или перетащите файлы</span>
+                            <span class="file-info" id="file-info">Файл не выбран</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="flex-row">
+                    <button class="btn btn-success" id="encrypt-file-btn">
+                        <i class="fas fa-lock"></i> Зашифровать файл
+                    </button>
+                    <button class="btn btn-secondary" id="decrypt-file-btn">
+                        <i class="fas fa-lock-open"></i> Расшифровать файл
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка RSA ключей -->
+        <div class="tab-content" id="rsa-tab">
+            <div class="card">
+                <h2 class="card-title">Пара RSA ключей</h2>
+                <p>Сгенерируйте пару ключей для асимметричного шифрования. Публичный ключ можно передавать.</p>
+                
+                <button class="btn" id="generate-rsa-btn">
+                    <i class="fas fa-key"></i> Сгенерировать новые ключи
+                </button>
+                
+                <div class="form-group" id="rsa-keys-container" style="display: none;">
+                    <h3>Публичный ключ</h3>
+                    <div class="key-display" id="public-key-display"></div>
+                    <button class="btn copy-btn" id="copy-public-key-btn">
+                        <i class="fas fa-copy"></i> Копировать
+                    </button>
+                    <button class="btn copy-btn" id="download-public-key-btn">
+                        <i class="fas fa-download"></i> Скачать
+                    </button>
+                    
+                    <h3 style="margin-top: 1.5rem;">Приватный ключ</h3>
+                    <div class="key-display" id="private-key-display"></div>
+                    <button class="btn copy-btn" id="copy-private-key-btn">
+                        <i class="fas fa-copy"></i> Копировать
+                    </button>
+                    <button class="btn copy-btn" id="download-private-key-btn">
+                        <i class="fas fa-download"></i> Скачать
+                    </button>
+                    
+                    <div class="alert alert-danger" style="margin-top: 1.5rem;">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        <strong>Внимание:</strong> Никогда не передавайте приватный ключ! Храните его в безопасности.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 2rem;">
+                <h2 class="card-title">RSA Шифрование/Дешифрование</h2>
+                
+                <div class="form-group">
+                    <label for="rsa-public-key">Публичный ключ (для шифрования)</label>
+                    <textarea id="rsa-public-key" placeholder="Вставьте публичный ключ"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="rsa-private-key">Приватный ключ (для дешифрования)</label>
+                    <textarea id="rsa-private-key" placeholder="Вставьте приватный ключ"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="rsa-message">Сообщение</label>
+                    <textarea id="rsa-message" placeholder="Введите сообщение для шифрования/дешифрования"></textarea>
+                </div>
+                
+                <div class="flex-row">
+                    <button class="btn btn-success" id="rsa-encrypt-btn">
+                        <i class="fas fa-lock"></i> Зашифровать RSA
+                    </button>
+                    <button class="btn btn-secondary" id="rsa-decrypt-btn">
+                        <i class="fas fa-lock-open"></i> Расшифровать RSA
+                    </button>
+                </div>
+                
+                <div class="result-container" id="rsa-result-container" style="display: none;">
+                    <h3>Результат:</h3>
+                    <div class="key-display" id="rsa-result"></div>
+                    <button class="btn copy-btn" id="copy-rsa-btn">
+                        <i class="fas fa-copy"></i> Копировать
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        // Переключение вкладок
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+            });
+        });
+        
+        // Система уведомлений
+        function showAlert(message, type = 'success') {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = message;
+            
+            const container = document.getElementById('alerts-container');
+            container.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            }, 5000);
+        }
+        
+        // Шифрование/дешифрование текста
+        document.getElementById('encrypt-text-btn').addEventListener('click', () => {
+            const password = document.getElementById('text-password').value;
+            const text = document.getElementById('text-input').value;
+            
+            if (!password || !text) {
+                showAlert('Введите пароль и текст', 'danger');
+                return;
+            }
+            
+            try {
+                const encrypted = encryptText(text, password);
+                document.getElementById('text-result').textContent = encrypted;
+                document.getElementById('text-result-container').style.display = 'block';
+                showAlert('Текст успешно зашифрован!');
+            } catch (e) {
+                showAlert(`Ошибка шифрования: ${e.message}`, 'danger');
+            }
+        });
+        
+        document.getElementById('decrypt-text-btn').addEventListener('click', () => {
+            const password = document.getElementById('text-password').value;
+            const text = document.getElementById('text-input').value;
+            
+            if (!password || !text) {
+                showAlert('Введите пароль и текст', 'danger');
+                return;
+            }
+            
+            try {
+                const decrypted = decryptText(text, password);
+                document.getElementById('text-result').textContent = decrypted;
+                document.getElementById('text-result-container').style.display = 'block';
+                showAlert('Текст успешно расшифрован!');
+            } catch (e) {
+                showAlert(`Ошибка дешифрования: ${e.message}`, 'danger');
+            }
+        });
+        
+        // Остальной JavaScript код остается без изменений
+        // ...
+        document.getElementById('decrypt-text-btn').addEventListener('click', () => {
+            const password = document.getElementById('text-password').value;
+            const text = document.getElementById('text-input').value;
+
+            if (!password || !text) {
+                showAlert('Please enter both password and text', 'danger');
+                return;
+            }
+
+            try {
+                const decrypted = decryptText(text, password);
+                document.getElementById('text-result').textContent = decrypted;
+                document.getElementById('text-result-container').style.display = 'block';
+                showAlert('Text decrypted successfully!');
+            } catch (e) {
+                showAlert(`Decryption failed: ${e.message}`, 'danger');
+            }
+        });
+
+        document.getElementById('clear-text-btn').addEventListener('click', () => {
+            document.getElementById('text-input').value = '';
+            document.getElementById('text-password').value = '';
+            document.getElementById('text-result').textContent = '';
+            document.getElementById('text-result-container').style.display = 'none';
+        });
+
+        document.getElementById('copy-text-btn').addEventListener('click', () => {
+            const result = document.getElementById('text-result').textContent;
+            navigator.clipboard.writeText(result);
+            showAlert('Copied to clipboard!');
+        });
+
+        document.getElementById('download-text-btn').addEventListener('click', () => {
+            const result = document.getElementById('text-result').textContent;
+            const blob = new Blob([result], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'encrypted.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+            showAlert('File downloaded!');
+        });
+        
+        // File handling
+        document.getElementById('file-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('file-info').textContent = `${file.name} (${formatFileSize(file.size)})`;
+            }
+        });
+        
+        document.getElementById('encrypt-file-btn').addEventListener('click', async () => {
+            const password = document.getElementById('file-password').value;
+            const fileInput = document.getElementById('file-input');
+            
+            if (!password || !fileInput.files.length) {
+                showAlert('Please select a file and enter password', 'danger');
+                return;
+            }
+
+            try {
+                const file = fileInput.files[0];
+                const arrayBuffer = await file.arrayBuffer();
+                const encrypted = encryptData(new Uint8Array(arrayBuffer), password);
+                
+                const blob = new Blob([encrypted], { type: 'application/octet-stream' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${file.name}.enc`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                showAlert('File encrypted and downloaded!');
+            } catch (e) {
+                showAlert(`File encryption failed: ${e.message}`, 'danger');
+            }
+        });
+        
+        document.getElementById('decrypt-file-btn').addEventListener('click', async () => {
+            const password = document.getElementById('file-password').value;
+            const fileInput = document.getElementById('file-input');
+            
+            if (!password || !fileInput.files.length) {
+                showAlert('Please select a file and enter password', 'danger');
+                return;
+            }
+            
+            try {
+                const file = fileInput.files[0];
+                const arrayBuffer = await file.arrayBuffer();
+                const decrypted = decryptData(new Uint8Array(arrayBuffer), password);
+
+                // Try to determine original file extension
+                let extension = '.bin';
+                if (file.name.endsWith('.enc')) {
+                    extension = file.name.slice(0, -4).split('.').pop() || '';
+                    if (extension) extension = '.' + extension;
+                }
+
+                const blob = new Blob([decrypted], { type: 'application/octet-stream' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `decrypted${extension}`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                showAlert('File decrypted and downloaded!');
+            } catch (e) {
+                showAlert(`File decryption failed: ${e.message}`, 'danger');
+            }
+        });
+
+        // RSA key generation
+        document.getElementById('generate-rsa-btn').addEventListener('click', async () => {
+            try {
+                const { publicKey, privateKey } = await generateRSAKeys();
+
+                document.getElementById('public-key-display').textContent = publicKey;
+                document.getElementById('private-key-display').textContent = privateKey;
+                document.getElementById('rsa-keys-container').style.display = 'block';
+
+                showAlert('RSA key pair generated successfully!');
+            } catch (e) {
+                showAlert(`RSA key generation failed: ${e.message}`, 'danger');
+            }
+        });
+
+        // RSA encryption/decryption
+        document.getElementById('rsa-encrypt-btn').addEventListener('click', async () => {
+            const publicKey = document.getElementById('rsa-public-key').value;
+            const message = document.getElementById('rsa-message').value;
+            
+            if (!publicKey || !message) {
+                showAlert('Please enter both public key and message', 'danger');
+                return;
+            }
+
+            try {
+                const encrypted = await rsaEncrypt(message, publicKey);
+                document.getElementById('rsa-result').textContent = encrypted;
+                document.getElementById('rsa-result-container').style.display = 'block';
+                showAlert('Message encrypted with RSA!');
+            } catch (e) {
+                showAlert(`RSA encryption failed: ${e.message}`, 'danger');
+            }
+        });
+
+        document.getElementById('rsa-decrypt-btn').addEventListener('click', async () => {
+            const privateKey = document.getElementById('rsa-private-key').value;
+            const message = document.getElementById('rsa-message').value;
+
+            if (!privateKey || !message) {
+                showAlert('Please enter both private key and message', 'danger');
+                return;
+            }
+            
+            try {
+                const decrypted = await rsaDecrypt(message, privateKey);
+                document.getElementById('rsa-result').textContent = decrypted;
+                document.getElementById('rsa-result-container').style.display = 'block';
+                showAlert('Message decrypted with RSA!');
+            } catch (e) {
+                showAlert(`RSA decryption failed: ${e.message}`, 'danger');
+            }
+        });
+        
+        // Helper functions
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Crypto functions
+        function encryptText(text, password) {
+            const salt = CryptoJS.lib.WordArray.random(128/8);
+            const iv = CryptoJS.lib.WordArray.random(128/8);
+
+            const key = CryptoJS.PBKDF2(password, salt, {
+                keySize: 256/32,
+                iterations: 100000
+            });
+            
+            const encrypted = CryptoJS.AES.encrypt(text, key, {
+                iv: iv,
+                padding: CryptoJS.pad.Pkcs7,
+                mode: CryptoJS.mode.CBC
+            });
+
+            // Combine salt, iv and ciphertext
+            const result = CryptoJS.enc.Base64.stringify(salt) + ":" +
+                           CryptoJS.enc.Base64.stringify(iv) + ":" +
+                           CryptoJS.enc.Base64.stringify(encrypted.ciphertext);
+
+            return result;
+        }
+
+        function decryptText(encryptedText, password) {
+            const parts = encryptedText.split(':');
+            if (parts.length !== 3) throw new Error('Invalid encrypted text format');
+
+            const salt = CryptoJS.enc.Base64.parse(parts[0]);
+            const iv = CryptoJS.enc.Base64.parse(parts[1]);
+            const ciphertext = CryptoJS.enc.Base64.parse(parts[2]);
+            
+            const key = CryptoJS.PBKDF2(password, salt, {
+                keySize: 256/32,
+                iterations: 100000
+            });
+
+            const decrypted = CryptoJS.AES.decrypt(
+                { ciphertext: ciphertext },
+                key,
+                { 
+                    iv: iv,
+                    padding: CryptoJS.pad.Pkcs7,
+                    mode: CryptoJS.mode.CBC
+                }
+            );
+
+            return decrypted.toString(CryptoJS.enc.Utf8);
+        }
+
+        function encryptData(data, password) {
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv = crypto.getRandomValues(new Uint8Array(16));
+            
+            const keyMaterial = crypto.subtle.importKey(
+                'raw',
+                new TextEncoder().encode(password),
+                { name: 'PBKDF2' },
+                false,
+                ['deriveBits', 'deriveKey']
+            );
+
+            const key = crypto.subtle.deriveKey(
+                {
+                    name: 'PBKDF2',
+                    salt: salt,
+                    iterations: 100000,
+                    hash: 'SHA-256'
+                },
+                keyMaterial,
+                { name: 'AES-CBC', length: 256 },
+                false,
+                ['encrypt']
+            );
+            
+            return key.then(key => {
+                return crypto.subtle.encrypt(
+                    { name: 'AES-CBC', iv: iv },
+                    key,
+                    data
+                ).then(encrypted => {
+                    // Combine salt (16) + iv (16) + encrypted data
+                    const result = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+                    result.set(salt, 0);
+                    result.set(iv, salt.length);
+                    result.set(new Uint8Array(encrypted), salt.length + iv.length);
+                    return result;
+                });
+            });
+        }
+
+        function decryptData(data, password) {
+            if (data.length < 32) throw new Error('Invalid encrypted data format');
+
+            const salt = data.slice(0, 16);
+            const iv = data.slice(16, 32);
+            const encrypted = data.slice(32);
+
+            const keyMaterial = crypto.subtle.importKey(
+                'raw',
+                new TextEncoder().encode(password),
+                { name: 'PBKDF2' },
+                false,
+                ['deriveBits', 'deriveKey']
+            );
+
+            const key = crypto.subtle.deriveKey(
+                {
+                    name: 'PBKDF2',
+                    salt: salt,
+                    iterations: 100000,
+                    hash: 'SHA-256'
+                },
+                keyMaterial,
+                { name: 'AES-CBC', length: 256 },
+                false,
+                ['decrypt']
+            );
+
+            return key.then(key => {
+                return crypto.subtle.decrypt(
+                    { name: 'AES-CBC', iv: iv },
+                    key,
+                    encrypted
+                );
+            }).then(decrypted => new Uint8Array(decrypted));
+        }
+
+        async function generateRSAKeys() {
+            const keyPair = await crypto.subtle.generateKey(
+                {
+                    name: 'RSA-OAEP',
+                    modulusLength: 4096,
+                    publicExponent: new Uint8Array([1, 0, 1]),
+                    hash: 'SHA-256'
+                },
+                true,
+                ['encrypt', 'decrypt']
+            );
+
+            const publicKey = await crypto.subtle.exportKey(
+                'spki',
+                keyPair.publicKey
+            );
+
+            const privateKey = await crypto.subtle.exportKey(
+                'pkcs8',
+                keyPair.privateKey
+            );
+            
+            return {
+                publicKey: arrayBufferToBase64(publicKey),
+                privateKey: arrayBufferToBase64(privateKey)
+            };
+        }
+        
+        async function rsaEncrypt(message, publicKeyPem) {
+            // Convert PEM to ArrayBuffer
+            const binaryString = atob(publicKeyPem.replace(/-+[^-]+-+/g, '').replace(/\s/g, ''));
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            
+            const publicKey = await crypto.subtle.importKey(
+                'spki',
+                bytes,
+                { name: 'RSA-OAEP', hash: 'SHA-256' },
+                false,
+                ['encrypt']
+            );
+            
+            const encrypted = await crypto.subtle.encrypt(
+                { name: 'RSA-OAEP' },
+                publicKey,
+                new TextEncoder().encode(message)
+            );
+            
+            return arrayBufferToBase64(encrypted);
+        }
+
+        async function rsaDecrypt(message, privateKeyPem) {
+            // Convert PEM to ArrayBuffer
+            const binaryString = atob(privateKeyPem.replace(/-+[^-]+-+/g, '').replace(/\s/g, ''));
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+
+            const privateKey = await crypto.subtle.importKey(
+                'pkcs8',
+                bytes,
+                { name: 'RSA-OAEP', hash: 'SHA-256' },
+                false,
+                ['decrypt']
+            );
+
+            const decrypted = await crypto.subtle.decrypt(
+                { name: 'RSA-OAEP' },
+                privateKey,
+                base64ToArrayBuffer(message)
+            );
+
+            return new TextDecoder().decode(decrypted);
+        }
+
+        function arrayBufferToBase64(buffer) {
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+        }
+
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+    </script>
+</body>
+</html>
